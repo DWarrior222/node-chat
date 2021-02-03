@@ -12,12 +12,13 @@ function createWs(server) {
   };
 
   wss.on('connection', (ws, req) => {
-    const user = Buffer.from(getUser(req), 'base64').toString();
-
-    if (!user) {
+    if (!getUser(req)) {
       console.error('用户未登录');
       return;
     }
+
+    const user = Buffer.from(getUser(req), 'base64').toString();
+    
     console.log('客户端连接了！！', );
 
     ws.isAlive = true;

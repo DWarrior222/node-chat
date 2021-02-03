@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import CHAT from '/src/views/chat.vue'
 import SIGNIN from '/src/views/signin.vue'
 import SIGNUP from '/src/views/signup.vue'
+import service from '../service/index'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -11,7 +12,11 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/chat',
     name: 'CHAT',
-    component: CHAT
+    component: CHAT,
+    beforeEnter: async () => {
+      const { data } = await service.getUserInfo();
+      return data.code === 20000 ? '/signin' : true
+    }
   },
   {
     path: '/signin',

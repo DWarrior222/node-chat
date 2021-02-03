@@ -34,6 +34,32 @@ router.get('/signout', (ctx, next) => {
   console.log('signout');
 });
 
+router.get('/userinfo', (ctx, next) => {
+  console.log('userinfo');
+  const name = ctx.cookies.get('name');
+  if (!name) {
+    ctx.body = {
+      data: {
+        msg: '未登录',
+        code: 20000
+      },
+      state: 200,
+      type: 'success' // 自定义响应体
+    }
+    next()
+    return
+  }
+  ctx.body = {
+    data: {
+      name,
+      code: 10000
+    },
+    state: 200,
+    type: 'success' // 自定义响应体
+  }
+  next()
+});
+
 module.exports = {
   router
 }

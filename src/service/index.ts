@@ -13,6 +13,15 @@ const login = async (params: loginface) => {
   }
 }
 
+const getUserInfo = async () => {
+  try {
+    const { data } = await http.get('userinfo', {})
+    return data
+  } catch (err) {
+    return false
+  }
+}
 export default {
-  login
+  login,
+  getUserInfo
 }
