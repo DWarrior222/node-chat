@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vuedx-typecheck . && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "server": "node server/main"
   },
   "dependencies": {
     "axios": "^0.21.1",
