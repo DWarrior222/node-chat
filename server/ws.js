@@ -46,7 +46,11 @@ function createWs(server) {
         ws.terminate();
         wss.broadcast(JSON.stringify(getUserMsg(user, '离开了房间', 'leave')));
         wss.broadcast(JSON.stringify(getUserListMsg(wss)));
+        return
       }
+
+      const { msg, type } = JSON.parse(message);
+      wss.broadcast(JSON.stringify(getUserMsg(user, msg, type)));
     });
   })
 
@@ -73,6 +77,7 @@ function getUserMsg(data, msg, type) {
 
 function getUserListMsg(wss) {
   const userList = [...wss.clients].filter(ws => ws.isAlive).map(ws => ws.user);
+  console.log(userList);
   return getUserMsg(userList, '在线列表', 'list')
 }
 

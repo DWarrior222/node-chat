@@ -1,13 +1,13 @@
 <template>
   <button @click="ws.send('close')">退出</button>
-  <button @click="$router.push('/signin')">登录</button>
+  <button @click="$router.push('/signin')" style="margin-left: 10px;">登录</button>
   <div class="chat">
     <div class="container">
       <div class="room">
         <div class="title"> room </div>
         <div class="room-cont">
-          <p v-for="({ data, msg, type}, i) in chatCont" :key="i">
-            <span v-if="type === 'join'">
+          <p v-for="({ data, msg, type}, i) in chatRecord" :key="i">
+            <span v-if="type === 'join' || type === 'leave'">
               {{ data }} {{ msg }}
             </span>
             <span v-else>
@@ -18,10 +18,10 @@
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
-            <textarea name="" id="" cols="30" rows="10"></textarea>
+            <textarea v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
           </div>
           <div class="bottom-tool">
-            <button>发送</button>
+            <button @click="send">发送</button>
           </div>
         </div>
       </div>
@@ -41,15 +41,19 @@
 import { defineComponent, reactive } from 'vue';
 export default defineComponent({
   setup() {
-    const chatCont = reactive([])
+    const chatRecord = reactive([])
+    const chatInfo = reactive({
+      value: ''
+    })
     const userList = reactive({
       arr: []
     })
     const ws = new WebSocket('ws://localhost:3334');
     return {
-      chatCont,
+      chatRecord,
       ws,
-      userList
+      userList,
+      chatInfo
     }
   },
   beforeRouteLeave() {
@@ -66,7 +70,7 @@ export default defineComponent({
       if (data.type === 'list') {
         this.userList.arr = data.data || [];
       } else {
-        this.chatCont.push(data);
+        this.chatRecord.push(data);
       }
     };
 
@@ -84,6 +88,14 @@ export default defineComponent({
       event.returnValue = '';
       this.ws.send('close');
     });
+  },
+  methods: {
+    send () {
+      const v = this.chatInfo.value;
+      this.chatInfo.value = ''
+      const msg = JSON.stringify({ msg: v, type: 'text' });
+      this.ws.send(msg);
+    }
   }
 });
 </script>
@@ -110,7 +122,7 @@ export default defineComponent({
       flex-direction: column;
 
       .room-cont {
-        padding: 10px 20px 60px;
+        padding: 20px;
         flex: 1;
         overflow: auto;
       }
