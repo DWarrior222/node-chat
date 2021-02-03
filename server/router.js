@@ -15,7 +15,7 @@ router.get('/signin', (ctx, next) => {
     next()
     return
   }
-  ctx.cookies.set('name', user);
+  ctx.cookies.set('name', Buffer.from(user).toString('base64'));
   ctx.body = {
     data: {
       msg: '登录成功'

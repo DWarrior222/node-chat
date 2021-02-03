@@ -12,7 +12,7 @@ function createWs(server) {
   };
 
   wss.on('connection', (ws, req) => {
-    const user = getUser(req);
+    const user = Buffer.from(getUser(req), 'base64').toString();
 
     if (!user) {
       console.error('用户未登录');
