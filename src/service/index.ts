@@ -21,7 +21,18 @@ const getUserInfo = async () => {
     return false
   }
 }
+
+const signout = async () => {
+  try {
+    await http.get('signout', {})
+    return true
+  } catch (err) {
+    return false
+  }
+}
+
 export default {
   login,
-  getUserInfo
+  getUserInfo,
+  signout
 }

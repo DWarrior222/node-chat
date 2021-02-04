@@ -1,6 +1,6 @@
 <template>
-  <div class="chat">
-    <input type="text" v-model="name">
+  <div class="signin">
+    <input type="text" v-model="name" placeholder="请输入名字">
     <button @click="login">登录</button>
   </div>
 </template>
@@ -31,3 +31,22 @@ export default defineComponent({
   }
 });
 </script>
+<style lang="less" scoped>
+.signin {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  >input {
+    height: 30px;
+    width: 200px;
+    text-indent: 1em;
+  }
+  >button {
+    width: 60px;
+    height: 30px;
+    margin-left: 10px;
+  }
+}
+</style>

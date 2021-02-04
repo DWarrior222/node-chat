@@ -1,6 +1,5 @@
 <template>
-  <button @click="ws.send('close')">退出</button>
-  <button @click="$router.push('/signin')" style="margin-left: 10px;">登录</button>
+  <button class="signout" @click="signout">退出</button>
   <div class="chat">
     <div class="container">
       <div class="room">
@@ -39,6 +38,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from 'vue';
+import service from '../service/index'
 export default defineComponent({
   setup() {
     const chatRecord = reactive([])
@@ -90,6 +90,11 @@ export default defineComponent({
     });
   },
   methods: {
+    async signout () {
+      this.ws.send('close')
+      await service.signout()
+      this.$router.push('/signin')
+    },
     send () {
       const v = this.chatInfo.value;
       this.chatInfo.value = ''
@@ -180,5 +185,10 @@ export default defineComponent({
       overflow: auto;
     }
   }
+}
+
+.signout {
+  width: 60px;
+  height: 30px;
 }
 </style>

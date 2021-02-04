@@ -32,6 +32,16 @@ router.get('/signup', (ctx, next) => {
 
 router.get('/signout', (ctx, next) => {
   console.log('signout');
+  ctx.cookies.set('name', '', { signed: false, maxAge: 0})
+  ctx.cookies.set('age', '', { signed: false, maxAge: 0 })
+  ctx.body = {
+    data: {
+      msg: '退出成功'
+    },
+    state: 200,
+    type: 'success' // 自定义响应体
+  }
+  next()
 });
 
 router.get('/userinfo', (ctx, next) => {
