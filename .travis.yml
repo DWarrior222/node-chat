@@ -1,0 +1,22 @@
+language: node_js
+node_js: 12.18.3
+branches:
+  only:
+  - master
+before_install:
+- openssl aes-256-cbc -K $encrypted_1a747b613118_key -iv $encrypted_1a747b613118_iv
+  -in id_rsa_travis.enc -out ~/.ssh/id_rsa_travis -d
+- chmod 600 ~/.ssh/id_rsa_travis
+- echo "before_install"
+install:
+- echo "install"
+script: true
+after_success:
+- "./docker.sh"
+- "./build.sh"
+- echo "after_success"
+addons:
+  ssh_known_hosts: 49.235.241.244
+env:
+  global:
+  - secure: psZvOi1uJ/2NU8ZqvQ3n2XLJbWv9jyf5wP3iJwkKmt+cTYnzHFcp+sWkGPVNFkjIE7r3BBzV7/OBZ2DSulYysoNEO/le+P2cn4kuYB72e01n6D3a5rwKi7qchTEZOwgWpZ7MIlQUj6jYv/0s6mHtuvThdnWdsW4hXMXcQzvhQDgkbxsroJ2WbqwWZWYW2LtnocZ3eSLPuCZRQ7dkEftlalhPcmB30xbOdunnn/XZvdBP/VLlU2cl9nDYqWTvqEJVfGkC0QYagNzsrZyKT/cf+eHxEMjduQ6Ba8CGeE2mg7g1NyO1jl6ntoK2x2LMHL0EXgaH/s2piMBkUUAON6CVVj6Jc3oMip29sZF4sWStNFBC14BQMR5NbKbH7mkNSe6BBF3V5iQI7cEOced8haEhlBE9rtW/KIz7XfJ1zJSNdI+4qzj9KTbMDQA1h/LaSFvVUWPQkTy6/xr40nxwpDP3nCmlN61gQXJUvp024+6SF4uwBWOBJWPQKBJHC5WItWjo3zGwRPbNMUOcpqKYcl5nhmkd+Tg8h+E+3cw7Oh4mM0DOaSEewdCbo8JhUCKwOyHvBuqqRcchOC/Wrkt+pxa00+6Frwfg78WSs5/qDFaYLazbiDFLFynioN1n3Q1UquTN1Tz6HMwlMVZq/3vlCBuQurXV/RxnhM1MV22gAbjavTU=
