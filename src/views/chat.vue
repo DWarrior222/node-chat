@@ -48,7 +48,8 @@ export default defineComponent({
     const userList = reactive({
       arr: []
     })
-    const ws = new WebSocket('ws://localhost:3334');
+    
+    const ws = new WebSocket(`ws://${location.host}/ws/`);
     return {
       chatRecord,
       ws,

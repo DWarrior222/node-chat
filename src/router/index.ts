@@ -14,7 +14,9 @@ const routes: Array<RouteRecordRaw> = [
     name: 'CHAT',
     component: CHAT,
     beforeEnter: async () => {
-      const { data } = await service.getUserInfo();
+      const res = await service.getUserInfo();
+      if (!res) return '/signin'
+      const { data = {} } = res;
       return data.code === 20000 ? '/signin' : true
     }
   },
