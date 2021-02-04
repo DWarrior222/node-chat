@@ -17,7 +17,7 @@
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
-            <textarea v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
+            <textarea @keydown.enter="send" v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
           </div>
           <div class="bottom-tool">
             <button @click="send">发送</button>
@@ -48,8 +48,9 @@ export default defineComponent({
     const userList = reactive({
       arr: []
     })
-    
-    const ws = new WebSocket(`ws://${location.host}/ws/`);
+    const isLocal = location.host.includes('localhost')
+    const wsUrl = isLocal ? 'ws://localhost:3334' : `ws://${location.host}/ws/`
+    const ws = new WebSocket(wsUrl);
     return {
       chatRecord,
       ws,
@@ -164,6 +165,11 @@ export default defineComponent({
           display: flex;
           align-items: center;
           justify-content: flex-end;
+
+          >button {
+            width: 70px;
+            height: 25px;
+          }
         }
       }
     }
