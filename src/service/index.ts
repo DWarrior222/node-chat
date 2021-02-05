@@ -1,4 +1,3 @@
-import { Interface } from 'readline';
 import http from '../http/index';
 
 interface loginface {

@@ -8,6 +8,7 @@
     "server": "node server/main"
   },
   "dependencies": {
+    "@types/node": "^14.14.25",
     "axios": "^0.21.1",
     "koa": "^2.13.1",
     "koa-router": "^10.0.0",

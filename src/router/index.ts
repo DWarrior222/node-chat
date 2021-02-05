@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import CHAT from '/src/views/chat.vue'
 import SIGNIN from '/src/views/signin.vue'
 import SIGNUP from '/src/views/signup.vue'
-import service from '../service/index'
+import service from '/src/service/index'
 
 const routes: Array<RouteRecordRaw> = [
   {
