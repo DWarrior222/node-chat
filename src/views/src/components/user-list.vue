@@ -22,7 +22,7 @@ export default defineComponent({
 <style lang="less" scoped>
 .user-list-cont {
   padding: 10px 20px;
-  max-height: 454px;
+  max-height: 654px;
   overflow: auto;
 }
 </style>

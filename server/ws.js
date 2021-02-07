@@ -5,9 +5,17 @@ function createWs(server) {
     server: server
   })
 
-  wss.broadcast = data => {
+  wss.broadcast = (data = {}, fromUser) => {
     wss.clients.forEach(client => {
-      client.send(data);
+      try {
+        const { user } = client;
+        const isMe = fromUser === user;
+        const res = { ...JSON.parse(data), isMe };
+        client.send(JSON.stringify(res));
+      } catch (error) {
+        console.log(error, 'error');
+        client.send('{}');
+      }
     });
   };
 
@@ -35,7 +43,7 @@ function createWs(server) {
     ws.wss = wss;
 
     // 通知所有客户端有人进入房间
-    wss.broadcast(JSON.stringify(getUserMsg(user, '进入了房间', 'join')));
+    wss.broadcast(JSON.stringify(getUserMsg(user, '进入了房间', 'join')), user);
 
     // 通知所有客户端更新房间列表
     wss.broadcast(JSON.stringify(getUserListMsg(wss)));
@@ -45,13 +53,13 @@ function createWs(server) {
       if (message === 'close') {
         ws.isAlive = false
         ws.terminate();
-        wss.broadcast(JSON.stringify(getUserMsg(user, '离开了房间', 'leave')));
+        wss.broadcast(JSON.stringify(getUserMsg(user, '离开了房间', 'leave')), user);
         wss.broadcast(JSON.stringify(getUserListMsg(wss)));
         return
       }
 
       const { msg, type } = JSON.parse(message);
-      wss.broadcast(JSON.stringify(getUserMsg(user, msg, type)));
+      wss.broadcast(JSON.stringify(getUserMsg(user, msg, type)), user);
     });
   })
 

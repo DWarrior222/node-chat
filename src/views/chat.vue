@@ -6,16 +6,6 @@
     <div class="container">
       <div class="room">
         <div class="title"> room </div>
-        <!-- <div class="room-cont" ref="room-cont">
-          <p v-for="({ data, msg, type}, i) in chatData" :key="i">
-            <span v-if="type === 'join' || type === 'leave'">
-              {{ data }} {{ msg }}
-            </span>
-            <span v-else>
-              {{ data }}: {{ msg }}
-            </span>
-          </p>
-        </div> -->
         <chat-record :chatData="chatData.value"></chat-record>
         <div class="input-area">
           <div class="top-tool"></div>
@@ -111,11 +101,11 @@ export default defineComponent({
 </script>
 <style scoped lang="less">
 .chat {
-  padding-top: 100px;
+  padding-bottom: 100px;
   .container {
     display: flex;
     width: 500px;
-    height: 500px;
+    height: 700px;
     background: antiquewhite;
     justify-content: space-between;
     margin: 0 auto;
@@ -153,6 +143,7 @@ export default defineComponent({
             outline: none;
             height: 90px;
             width: 560px;
+            font-size: 16px;
           }
         }
 
