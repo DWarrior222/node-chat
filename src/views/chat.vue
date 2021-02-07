@@ -16,7 +16,7 @@
             </span>
           </p>
         </div> -->
-        <chat-record :chatData="chatData"></chat-record>
+        <chat-record :chatData="chatData.value"></chat-record>
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
@@ -29,7 +29,7 @@
       </div>
       <div class="user-list">
         <div class="title"> 当前在线用户 </div>
-        <user-list :userData="userList.arr"></user-list>
+        <user-list :userData="userList.value"></user-list>
       </div>
     </div>
   </div>
@@ -48,9 +48,9 @@ export default defineComponent({
     UserList
   },
   setup() {
-    const chatData = reactive([])
+    const chatData = reactive({ value: [] })
     const chatInfo = reactive({ value: '' })
-    const userList = reactive({ arr: [] })
+    const userList = reactive({ value: [] })
     const ws = createWs()
     
     return {
@@ -89,9 +89,9 @@ export default defineComponent({
       ws.onmessage = event => { 
         const data = JSON.parse(event.data);
         if (data.type === 'list') {
-          this.userList.arr = data.data || [];
+          this.userList.value = data.data || [];
         } else {
-          this.chatData.push(data);
+          this.chatData.value.push(data);
         }
       };
 

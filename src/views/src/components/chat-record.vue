@@ -19,19 +19,18 @@ export default defineComponent({
     chatData: Array
   },
   watch: {
-    // data() {
-    //   const el = this.$refs['room-cont'];
-    //   const scrollHeight = el.scrollHeight,
-    //   clientHeight = el.clientHeight,
-    //   scrollTop = el.scrollTop;
-    //   const isBottom = scrollTop === scrollHeight - clientHeight;
-    //   if (isBottom) setTimeout(() => { 
-    //     const newTop = el.scrollHeight - el.clientHeight;
-    //     console.log(newTop, 'top');
-        
-    //     el.scrollTo(0, newTop) 
-    //   });
-    // }
+    'chatData.length'() {
+      const el = this.$refs['room-cont'];
+      const scrollHeight = el.scrollHeight,
+      clientHeight = el.clientHeight,
+      scrollTop = el.scrollTop;
+      const isBottom = scrollTop === scrollHeight - clientHeight;
+      
+      if (isBottom) setTimeout(() => { 
+        const newTop = el.scrollHeight - el.clientHeight;
+        el.scrollTo(0, newTop) 
+      });
+    }
   },
   setup() {
     return {
@@ -44,5 +43,6 @@ export default defineComponent({
   padding: 20px;
   flex: 1;
   overflow: auto;
+  font-size: 18px;
 }
 </style>
