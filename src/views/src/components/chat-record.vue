@@ -1,6 +1,6 @@
 <template>
   <div class="room-container">
-    <div class="room-cont" ref="room-cont">
+    <div class="room-cont" :ref="setRef">
       <p v-for="({ data, msg, type }, i) in chatData" :key="i">
         <span v-if="type === 'join' || type === 'leave'">
           {{ data }} {{ msg }}
@@ -15,17 +15,41 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default defineComponent({
   setup() {
     const isShowNewsTip = ref(false);
+
+    let myRef = null;
+    const setRef = e => {
+      myRef = e;
+    }
+    const getElInfo = () => {
+      const el = myRef;
+      const scrollHeight = el.scrollHeight,
+      clientHeight = el.clientHeight,
+      scrollTop = el.scrollTop;
+      return { el, scrollHeight, clientHeight, scrollTop };
+    }
+
+    const onScroll = () => {
+      const { el, scrollHeight, clientHeight, scrollTop } = getElInfo();
+      const isBottom = scrollTop === scrollHeight - clientHeight;
+      if (isBottom) isShowNewsTip.value = false;
+    }
     onMounted(() => {
-      // window.addEventListener('scroll');
-      console.log(isShowNewsTip.value, 'this');
+      const { el } = getElInfo();
+      el.addEventListener('scroll', onScroll);
+    })
+    onBeforeUnmount(() => {
+      const { el } = getElInfo();
+      el.removeEventListener('scroll', onScroll);
     })
     return {
-      isShowNewsTip
+      isShowNewsTip,
+      setRef,
+      getElInfo
     }
   },
   props: {
@@ -48,13 +72,13 @@ export default defineComponent({
     }
   },
   methods: {
-    getElInfo() {
-      const el = this.$refs['room-cont'];
-      const scrollHeight = el.scrollHeight,
-      clientHeight = el.clientHeight,
-      scrollTop = el.scrollTop;
-      return { el, scrollHeight, clientHeight, scrollTop };
-    },
+    // getElInfo() {
+    //   const el = this.$refs['room-cont'];
+    //   const scrollHeight = el.scrollHeight,
+    //   clientHeight = el.clientHeight,
+    //   scrollTop = el.scrollTop;
+    //   return { el, scrollHeight, clientHeight, scrollTop };
+    // },
     toNews() {
       const { el, scrollHeight, clientHeight, scrollTop } = this.getElInfo();
       const newsTop = scrollHeight - clientHeight;
