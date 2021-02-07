@@ -173,6 +173,7 @@ export default defineComponent({
 
   .user-list {
     width: 200px;
+    font-size: 14px;
   }
 }
 

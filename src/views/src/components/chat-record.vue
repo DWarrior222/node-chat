@@ -2,7 +2,7 @@
   <div class="room-container">
     <div class="room-cont" :ref="setRef">
       <div v-for="({ data, msg, type, isMe }, i) in chatData" :key="i">
-        <div v-if="type === 'join' || type === 'leave'">
+        <div class="tip" v-if="type === 'join' || type === 'leave'">
           {{ data }} {{ msg }}
         </div>
         <chat-msg v-else :msg="msg" :data="data" :is-me="isMe"></chat-msg>
@@ -102,6 +102,11 @@ export default defineComponent({
     padding: 20px;
     overflow: auto;
     font-size: 18px;
+
+    .tip {
+      text-align: center;
+      font-size: 14px;
+    }
   }
 
   .to-news {
