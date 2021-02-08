@@ -1,11 +1,13 @@
 <template>
   <button class="signout" @click="signout">退出</button>
   <button class="signout" @click="$router.push('/signin')">登录</button>
-  
   <div class="chat">
     <div class="container">
       <div class="room">
-        <div class="title"> room </div>
+        <div class="title">
+          room
+          {{ onlineStatus ? "在线" : "掉线了"}} <span v-if="!onlineStatus" @click="reConnecting">点我重连</span>
+        </div>
         <chat-record :chatData="chatData.value"></chat-record>
         <div class="input-area">
           <div class="top-tool"></div>
@@ -26,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import service from '../service/index'
 import { createWs, listenBeforeUnload, leaveWsPage } from '../http/ws'
 import ChatRecord from './src/components/chat-record.vue'
@@ -41,13 +43,17 @@ export default defineComponent({
     const chatData = reactive({ value: [] })
     const chatInfo = reactive({ value: '' })
     const userList = reactive({ value: [] })
+    const onlineStatus = ref(true)
     const ws = createWs()
+    const checkTimer = 0
     
     return {
       chatData,
       userList,
       chatInfo,
-      ws
+      ws,
+      onlineStatus,
+      checkTimer
     }
   },
   beforeRouteLeave() {
@@ -59,6 +65,13 @@ export default defineComponent({
     this.registerWs()
   },
   methods: {
+    checkOnlineStatus () {
+      clearTimeout(this.checkTimer)
+      this.onlineStatus = true;
+      this.checkTimer = setTimeout(() => {
+        this.onlineStatus = false;
+      }, 35000);
+    },
     async signout () {
       const { ws, $router } = this;
       ws.send('close')
@@ -72,12 +85,14 @@ export default defineComponent({
       if (!v.trim()) return
       const msg = JSON.stringify({ msg: v, type: 'text' });
       ws.send(msg);
+      if (ws.readyState === 3) this.onlineStatus = false;
     },
     registerWs () {
       const { ws } = this;
       // 用于指定当从服务器接受到信息时的回调函数。
       ws.onmessage = event => { 
         const data = JSON.parse(event.data);
+        this.checkOnlineStatus()
         if (data.type === 'list') {
           this.userList.value = data.data || [];
         } else {
@@ -95,6 +110,12 @@ export default defineComponent({
       listenBeforeUnload(() => {
         ws.send('close');
       })
+    },
+    reConnecting () {
+      const ws = createWs()
+      this.ws = ws
+      this.registerWs()
+      if (ws.readyState === 1) this.onlineStatus = true;
     }
   }
 });
