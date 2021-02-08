@@ -112,7 +112,8 @@ export default defineComponent({
   .to-news {
     position: absolute;
     bottom: 10px;
-    right: 10px;
+    right: 50%;
+    transform: translateX(50%);
     font-size: 14px;
   }
 }
