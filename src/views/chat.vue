@@ -12,7 +12,7 @@
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
-            <textarea @keydown.enter="send" v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
+            <textarea v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
           </div>
           <div class="bottom-tool">
             <button @click="send">发送</button>
