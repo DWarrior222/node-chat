@@ -1,8 +1,9 @@
 const mysql = require('mysql2');
 let isConnecting = false;
+const isProp = process.env.NODE_ENV === 'prop'
 
 const connection =  mysql.createConnection({
-  host: "49.235.241.244",
+  host: isProp ? "localhost" : "49.235.241.244",
   user: "root",
   password: "Shuai2121.",
   database: 'chat'
