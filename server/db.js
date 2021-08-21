@@ -26,15 +26,18 @@ function insertRecord({ name, cont }) {
 }
 
 function getRecord({ start, end }) {
-  if (!isConnecting) return;
-  connection.query(
-    `SELECT * FROM pet WHERE id >= ${start} AND id <= ${end};`,
-    (err, result) => {
-    if (err) throw err;
-    console.log("1 record inserted");
-  });
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT * FROM chat_record WHERE id >= ${start} AND id <= ${end};`,
+      (err, result) => {
+      if (err) reject(err);
+      console.log("1 record get");
+      resolve(result);
+    });
+  })
 }
 
 module.exports = {
-  insertRecord
+  insertRecord,
+  getRecord
 }

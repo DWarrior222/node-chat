@@ -30,8 +30,20 @@ const signout = async () => {
   }
 }
 
+const getHistoryMsg = async () => {
+  try {
+    const { data } = await http.get('history', {})
+    return data
+  } catch (err) {
+    return {
+      data: []
+    }
+  }
+}
+
 export default {
   login,
   getUserInfo,
-  signout
+  signout,
+  getHistoryMsg
 }

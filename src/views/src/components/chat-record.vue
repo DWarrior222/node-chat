@@ -1,11 +1,11 @@
 <template>
   <div class="room-container">
     <div class="room-cont" :ref="setRef">
-      <div v-for="({ data, msg, type, isMe }, i) in chatData" :key="i">
+      <div v-for="({ name, cont, type }, i) in chatData" :key="i">
         <div class="tip" v-if="type === 'join' || type === 'leave'">
-          {{ data }} {{ msg }}
+          {{ name }} {{ cont }}
         </div>
-        <chat-msg v-else :msg="msg" :data="data" :is-me="isMe"></chat-msg>
+        <chat-msg v-else :cont="cont" :name="name" :is-me="username === name"></chat-msg>
       </div>
     </div>
     <span v-if="isShowNewsTip" @click="toNews" class="to-news">查看最新消息</span>
@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount, watchEffect, watch, onUnmounted } from 'vue';
+import { defineComponent, ref, onMounted, watch, onUnmounted } from 'vue';
 import ChatMsg from './chat-msg.vue';
 export default defineComponent({
   components: {
@@ -21,7 +21,8 @@ export default defineComponent({
   },
 
   props: {
-    chatData: Array
+    chatData: Array,
+    username: String
   },
 
   setup(props) {

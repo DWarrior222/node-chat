@@ -1,8 +1,8 @@
 const Router = require('koa-router');
 const router = new Router();
+const { getRecord } = require('./db.js');
 
 router.get('/signin', (ctx, next) => {
-  console.log('ctx.query =', ctx.query, 'ctx.param = ', ctx.param, 'ctx.body = ', ctx.body);
   const { user } = ctx.query || {}
   if (!user) {
     ctx.body = {
@@ -61,9 +61,32 @@ router.get('/userinfo', (ctx, next) => {
   }
   ctx.body = {
     data: {
-      name,
+      name: Buffer.from(name, 'base64').toString(),
       code: 10000
     },
+    state: 200,
+    type: 'success' // 自定义响应体
+  }
+  next()
+});
+
+router.get('/history', async (ctx, next) => {
+  const name = ctx.cookies.get('name');
+  if (!name) {
+    ctx.body = {
+      data: {
+        msg: '未登录',
+        code: 20000
+      },
+      state: 200,
+      type: 'success' // 自定义响应体
+    }
+    next()
+    return
+  }
+  const result = await getRecord({ start: 0, end: 10 });
+  ctx.body = {
+    data: result,
     state: 200,
     type: 'success' // 自定义响应体
   }

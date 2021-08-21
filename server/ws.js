@@ -59,9 +59,9 @@ function createWs(server) {
         return
       }
 
-      const { msg, type } = JSON.parse(message);
-      wss.broadcast(JSON.stringify(getUserMsg(user, msg, type)), user);
-      insertRecord({ name: user, cont: msg });
+      const { cont, type } = JSON.parse(message);
+      wss.broadcast(JSON.stringify(getUserMsg(user, cont, type)), user);
+      insertRecord({ name: user, cont, type });
     });
   })
 
@@ -82,8 +82,8 @@ function createWs(server) {
   });
 }
 
-function getUserMsg(data, msg, type) {
-  return { data, msg, type }
+function getUserMsg(name, cont, type) {
+  return { name, cont, type }
 }
 
 function getUserListMsg(wss) {

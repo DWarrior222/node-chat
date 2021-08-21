@@ -11,5 +11,5 @@ console.log('listen port 3334');
 createWs(server);
 
 app.on('error', err => {
-  log.error('server error', err)
+  console.error('server error', err)
 });

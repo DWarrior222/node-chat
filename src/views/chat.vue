@@ -8,11 +8,11 @@
           room
           {{ onlineStatus ? "在线" : "掉线了"}} <span v-if="!onlineStatus" @click="reConnecting">点我重连</span>
         </div>
-        <chat-record :chatData="chatData.value"></chat-record>
+        <chat-record :username="username" :chatData="chatData.value"></chat-record>
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
-            <textarea v-model="chatInfo.value" name="" id="" cols="30" rows="10"></textarea>
+            <textarea v-model="chatInfo" name="" id="" cols="30" rows="10"></textarea>
           </div>
           <div class="bottom-tool">
             <button @click="send">发送</button>
@@ -30,7 +30,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue';
 import service from '../service/index'
-import { createWs, listenBeforeUnload, leaveWsPage } from '../http/ws'
+import { createWs, listenBeforeUnload } from '../http/ws'
 import ChatRecord from './src/components/chat-record.vue'
 import UserList from './src/components/user-list.vue'
 
@@ -41,11 +41,12 @@ export default defineComponent({
   },
   setup() {
     const chatData = reactive({ value: [] })
-    const chatInfo = reactive({ value: '' })
     const userList = reactive({ value: [] })
     const onlineStatus = ref(true)
     const ws = createWs()
     const checkTimer = 0
+    const username = ref();
+    const chatInfo = ref();
     
     return {
       chatData,
@@ -53,18 +54,27 @@ export default defineComponent({
       chatInfo,
       ws,
       onlineStatus,
-      checkTimer
+      checkTimer,
+      username
     }
   },
   beforeRouteLeave() {
-    const flag = leaveWsPage();
-    if (!flag) return false
     this.ws.send('close');
   },
   mounted() {
+    this.getUser();
+    this.getHistoryMsg();
     this.registerWs()
   },
   methods: {
+    async getUser() {
+      const { data } = await service.getUserInfo();
+      this.username = data.name;
+    },
+    async getHistoryMsg () {
+      const { data = [] } = await service.getHistoryMsg();    
+      this.chatData.value.unshift(...data);
+    },
     checkOnlineStatus () {
       clearTimeout(this.checkTimer)
       this.onlineStatus = true;
@@ -80,10 +90,10 @@ export default defineComponent({
     },
     send () {
       const { chatInfo, ws } = this;
-      const v = chatInfo.value;
-      chatInfo.value = ''
-      if (!v.trim()) return
-      const msg = JSON.stringify({ msg: v, type: 'text' });
+      // const v = chatInfo;
+      this.chatInfo = ''
+      if (!chatInfo.trim()) return
+      const msg = JSON.stringify({ cont: chatInfo, type: 'text' });
       ws.send(msg);
       if (ws.readyState === 3) this.onlineStatus = false;
     },
@@ -94,7 +104,7 @@ export default defineComponent({
         const data = JSON.parse(event.data);
         this.checkOnlineStatus()
         if (data.type === 'list') {
-          this.userList.value = data.data || [];
+          this.userList.value = data.name || [];
         } else {
           this.chatData.value.push(data);
         }

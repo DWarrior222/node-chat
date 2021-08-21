@@ -16,11 +16,3 @@ export function listenBeforeUnload (callback?: () => void) {
     if (callback) callback();
   });
 }
-
-export function leaveWsPage () {
-  const answer = window?.confirm(
-    '确定离开当前页面吗'
-  )
-  if (!answer) return false
-  else return true
-}

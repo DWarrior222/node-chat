@@ -1,21 +1,21 @@
 <template>
   <div class="user-msg" :class="{'is-me': isMe}">
     <span class="user-name">
-      {{ data }}
+      {{ name }}
     </span>
     <span class="msg">
-      {{ msg }}
+      {{ cont }}
     </span>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onBeforeUnmount, watchEffect, watch, onUnmounted } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
-    data: String,
-    msg: String,
+    name: String,
+    cont: String,
     isMe: Boolean
   },
 
