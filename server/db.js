@@ -28,7 +28,8 @@ function insertRecord({ name, cont }) {
 function getRecord({ start, end }) {
   return new Promise((resolve, reject) => {
     connection.query(
-      `SELECT * FROM chat_record WHERE id >= ${start} AND id <= ${end};`,
+      // `SELECT * FROM chat_record WHERE id >= ${start} AND id <= ${end};`,
+      `SELECT * FROM chat_record`,
       (err, result) => {
       if (err) reject(err);
       console.log("1 record get");
