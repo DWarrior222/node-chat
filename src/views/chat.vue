@@ -8,7 +8,7 @@
           room
           {{ onlineStatus ? "在线" : "掉线了"}} <span v-if="!onlineStatus" @click="reConnecting">点我重连</span>
         </div>
-        <chat-record :username="username" :chatData="chatData.value"></chat-record>
+        <chat-record :username="username" :chatData="chatData"></chat-record>
         <div class="input-area">
           <div class="top-tool"></div>
           <div class="text">
@@ -21,14 +21,15 @@
       </div>
       <div class="user-list">
         <div class="title"> 当前在线用户 </div>
-        <user-list :userData="userList.value"></user-list>
+        <user-list :userData="userList"></user-list>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref, onMounted } from 'vue';
+import { onBeforeRouteLeave, useRouter, useRoute } from 'vue-router';
 import service from '../service/index'
 import { createWs, listenBeforeUnload } from '../http/ws'
 import ChatRecord from './src/components/chat-record.vue'
@@ -40,73 +41,43 @@ export default defineComponent({
     UserList
   },
   setup() {
-    const chatData = reactive({ value: [] })
-    const userList = reactive({ value: [] })
-    const onlineStatus = ref(true)
-    const ws = createWs()
-    const checkTimer = 0
-    const username = ref();
+    const chatData = ref([]);
+    const userList = ref([]);
+    let onlineStatus = ref(true)
+    let ws = createWs();
+    let checkTimer;
+    let username = ref();
     const chatInfo = ref();
+    const router = useRouter();
     
-    return {
-      chatData,
-      userList,
-      chatInfo,
-      ws,
-      onlineStatus,
-      checkTimer,
-      username
-    }
-  },
-  beforeRouteLeave() {
-    this.ws.send('close');
-  },
-  mounted() {
-    this.getUser();
-    this.getHistoryMsg();
-    this.registerWs()
-  },
-  methods: {
-    async getUser() {
+
+    const getUser = async () => {
       const { data } = await service.getUserInfo();
-      this.username = data.name;
-    },
-    async getHistoryMsg () {
+      username.value = data.name;
+    }
+
+    const getHistoryMsg = async () => {
       const { data = [] } = await service.getHistoryMsg();    
-      this.chatData.value.unshift(...data);
-    },
-    checkOnlineStatus () {
-      clearTimeout(this.checkTimer)
-      this.onlineStatus = true;
-      this.checkTimer = setTimeout(() => {
-        this.onlineStatus = false;
+      chatData.value.unshift(...data);
+    }
+
+    const checkOnlineStatus = () => {
+      clearTimeout(checkTimer)
+      onlineStatus = ref(true);
+      checkTimer = setTimeout(() => {
+        onlineStatus = ref(false);
       }, 35000);
-    },
-    async signout () {
-      const { ws, $router } = this;
-      ws.send('close')
-      await service.signout()
-      $router.push('/signin')
-    },
-    send () {
-      const { chatInfo, ws } = this;
-      // const v = chatInfo;
-      this.chatInfo = ''
-      if (!chatInfo.trim()) return
-      const msg = JSON.stringify({ cont: chatInfo, type: 'text' });
-      ws.send(msg);
-      if (ws.readyState === 3) this.onlineStatus = false;
-    },
-    registerWs () {
-      const { ws } = this;
+    }
+
+    const registerWs = () => {
       // 用于指定当从服务器接受到信息时的回调函数。
       ws.onmessage = event => { 
         const data = JSON.parse(event.data);
-        this.checkOnlineStatus()
+        checkOnlineStatus()
         if (data.type === 'list') {
-          this.userList.value = data.name || [];
+          userList.value = data.name || [];
         } else {
-          this.chatData.value.push(data);
+          chatData.value.push(data);
         }
       };
 
@@ -120,12 +91,49 @@ export default defineComponent({
       listenBeforeUnload(() => {
         ws.send('close');
       })
-    },
-    reConnecting () {
-      const ws = createWs()
-      this.ws = ws
-      this.registerWs()
-      if (ws.readyState === 1) this.onlineStatus = true;
+    }
+
+    onBeforeRouteLeave(() => {
+      ws.send('close')
+    })
+    
+    const send = () => {
+      console.log(chatInfo.value, 'send');
+      if (!chatInfo.value.trim()) return
+      const msg = JSON.stringify({ cont: chatInfo.value, type: 'text' });
+      ws.send(msg);
+      chatInfo.value = ''
+      
+      if (ws.readyState === 3) onlineStatus = ref(false);
+    }
+
+    const reConnecting = () => {
+      ws = createWs();
+      registerWs()
+      if (ws.readyState === 1) onlineStatus = ref(true);
+    }
+
+    const signout = async () => {
+      ws.send('close')
+      await service.signout()
+      router.push('/signin')
+    }
+
+    getUser();
+    getHistoryMsg();
+    registerWs()
+
+
+    return {
+      chatData,
+      userList,
+      chatInfo,
+      ws,
+      onlineStatus,
+      checkTimer,
+      username,
+      reConnecting,
+      send
     }
   }
 });

@@ -57,7 +57,7 @@ export default defineComponent({
     // 卸载
     onUnmounted(() => {
       const { el } = getElInfo();
-      el.removeEventListener('scroll', onScroll);
+      el.removeEventListener && el.removeEventListener('scroll', onScroll);
     })
 
     // 监听聊天内容变化
