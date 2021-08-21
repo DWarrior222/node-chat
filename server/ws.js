@@ -1,4 +1,5 @@
 const WebSocket = require('ws');
+const { insertRecord } = require('./db.js');
 
 function createWs(server) {
   const wss = new WebSocket.Server({
@@ -60,7 +61,7 @@ function createWs(server) {
 
       const { msg, type } = JSON.parse(message);
       wss.broadcast(JSON.stringify(getUserMsg(user, msg, type)), user);
-      server.db.insertRecord({ name: user, cont: msg });
+      insertRecord({ name: user, cont: msg });
     });
   })
 
