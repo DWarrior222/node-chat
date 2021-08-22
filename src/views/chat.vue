@@ -1,6 +1,5 @@
 <template>
   <button class="signout" @click="signout">退出</button>
-  <button class="signout" @click="$router.push('/signin')">登录</button>
   <div class="chat">
     <div class="container">
       <div class="room">
@@ -133,7 +132,8 @@ export default defineComponent({
       checkTimer,
       username,
       reConnecting,
-      send
+      send,
+      signout
     }
   }
 });

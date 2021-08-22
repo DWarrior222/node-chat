@@ -28,23 +28,22 @@ export default defineComponent({
   setup(props) {
     const isShowNewsTip = ref(false);
 
-    let myRef = null;
+    let myRef = ref();
     const setRef = e => {
-      myRef = e;
+      myRef.value = e;
     }
     // 获取聊天内容的 DOM 数据
     const getElInfo = () => {
-      const el = myRef;
-      if (!el) return {};
-      const scrollHeight = el.scrollHeight,
-      clientHeight = el.clientHeight,
-      scrollTop = el.scrollTop;
-      return { el, scrollHeight, clientHeight, scrollTop };
+      if (!myRef.value) return {};
+      const scrollHeight = myRef.value.scrollHeight,
+      clientHeight = myRef.value.clientHeight,
+      scrollTop = myRef.value.scrollTop;
+      return { el: myRef, scrollHeight, clientHeight, scrollTop };
     }
 
     // 滚动时监听是否查看了最新消息
     const onScroll = () => {
-      const { el, scrollHeight, clientHeight, scrollTop } = getElInfo();
+      const { scrollHeight, clientHeight, scrollTop } = getElInfo();
       const isBottom = scrollTop === scrollHeight - clientHeight;
       if (isBottom) isShowNewsTip.value = false;
     }
@@ -52,12 +51,12 @@ export default defineComponent({
     // 挂载
     onMounted(() => {
       const { el } = getElInfo();
-      el.addEventListener('scroll', onScroll);
+      el.value.addEventListener('scroll', onScroll);
     })
     // 卸载
     onUnmounted(() => {
       const { el } = getElInfo();
-      el.removeEventListener && el.removeEventListener('scroll', onScroll);
+      el.value.removeEventListener && el.value.removeEventListener('scroll', onScroll);
     })
 
     // 监听聊天内容变化
@@ -69,8 +68,8 @@ export default defineComponent({
       if (isBottom) {
         setTimeout(() => { 
           isShowNewsTip.value = false;
-          const newsTop = el.scrollHeight - el.clientHeight;
-          el.scrollTo(0, newsTop) 
+          const newsTop = el.value.scrollHeight - el.value.clientHeight;
+          el.value.scrollTo(0, newsTop) 
         });
         return;
       }
@@ -81,7 +80,7 @@ export default defineComponent({
     const toNews = () => {
       const { el, scrollHeight, clientHeight, scrollTop } = getElInfo();
       const newsTop = scrollHeight - clientHeight;
-      el.scrollTo(0, newsTop) 
+      el.value.scrollTo(0, newsTop) 
       isShowNewsTip.value = false;
     }
     
